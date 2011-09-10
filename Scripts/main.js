@@ -27,18 +27,13 @@ x$(window).on("load", function() {
             l3: 11
         };*/
         this.fdata = {
-            y1: 0,
-            y2: 1,
-            y3: 2,
-            y4: 3,
-            y5: 4,
-            r1: 5,
-            r2: 6,
-            r3: 7,
-            r4: 8,
-            r5: 9
+            r1: 0,
+            r2: 1,
+            r3: 2,
+            r4: 3,
+            r5: 4
         };
-        this.sSheet = new SpriteSheet(this.img, 39, 36,this.fdata);
+        this.sSheet = new SpriteSheet(this.img, 37, 36,this.fdata);
         this.bs = new BitmapSequence(this.sSheet);
         this.bs.y = this.y;
         this.bs.x = this.x;
@@ -46,10 +41,20 @@ x$(window).on("load", function() {
         stage.addChild(this.bs);
         stage.update();
         this.step = 1;
-        this.update = function(up,down,left,right,space,sdir) {
-            /*if(up and this.y>0) {
-                
-            }*/
+        this.update = function(up,down,left,right,space) {
+            if(up && this.y>0) {
+                this.y -= this.spd[1];
+            }
+            if(down && this.y<canvas.height-36) {
+                this.y += this.spd[1];
+            }
+            if(left && this.x>0) {
+                this.x -= this.spd[0];
+            }
+            if(right && this.x<canvas.width-37) {
+                this.x += this.spd[0];
+            }
+            this.bs.gotoAndStop("r2");
             
             this.bs.x = this.x;
             this.bs.y = this.y;
@@ -71,8 +76,63 @@ x$(window).on("load", function() {
         }
     }
     window.tick = function() {
+        player.update(u,d,l,r,s,sd);
         stage.update();
     };
+    var u,d,l,r,s = false;
+    var sd = "r";
+    $("*").on("keydown", function(e) {
+        //e.preventDefault();
+        //e.stopPropagation();
+        //console.log(e);
+        if(e.which===38) {
+            e.preventDefault();
+            e.stopPropagation();
+            u = true;
+        } else if(e.which===40) {
+            e.preventDefault();
+            e.stopPropagation();
+            d = true;
+        } else if(e.which===37) {
+            e.preventDefault();
+            e.stopPropagation();
+            l = true;
+            sd = "l";
+        } else if(e.which===39) {
+            e.preventDefault();
+            e.stopPropagation();
+            r = true;
+            sd = "r";
+        } else if(e.which===32) {
+            e.preventDefault();
+            e.stopPropagation();
+            s = true;
+        }
+    });
+    $("*").on("keyup", function(e) {
+        //console.log(e);
+        if(e.which===38) {
+            e.preventDefault();
+            e.stopPropagation();
+            u = false;
+        } else if(e.which===40) {
+            e.preventDefault();
+            e.stopPropagation();
+            d = false;
+        } else if(e.which===37) {
+            e.preventDefault();
+            e.stopPropagation();
+            l = false;
+        } else if(e.which===39) {
+            e.preventDefault();
+            e.stopPropagation();
+            r = false;
+        } else if(e.which===32) {
+            e.preventDefault();
+            e.stopPropagation();
+            s = false;
+        }
+    });
     function imgLoaded(e) {
         //stage.addChild(player.image);
         player.bit = new Bitmap(player.image);
@@ -100,7 +160,7 @@ x$(window).on("load", function() {
         pImg.onerror = function(e) {
             console.log(e);
         };
-        pImg.src = "Graphics/mudkipSprites2.png";
+        pImg.src = "./Graphics/mudkipSprites3.png";
         window.player = new Player(32,32,pImg);
     }
     init();

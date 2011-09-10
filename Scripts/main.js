@@ -27,20 +27,21 @@ x$(window).on("load", function() {
             l3: 11
         };*/
         this.fdata = {
-            r1: 0,
-            r2: 1,
-            r3: 2,
-            r4: 3,
-            r5: 4
+            1: 0,
+            2: 1,
+            3: 2,
+            4: 3,
+            5: 4
         };
         this.sSheet = new SpriteSheet(this.img, 37, 36,this.fdata);
         this.bs = new BitmapSequence(this.sSheet);
         this.bs.y = this.y;
         this.bs.x = this.x;
-        this.bs.gotoAndStop("r1");
+        this.bs.gotoAndStop("1");
         stage.addChild(this.bs);
         stage.update();
         this.step = 1;
+        //console.log(this.fdata, this.fdata.length);
         this.update = function(up,down,left,right,space) {
             if(up && this.y>0) {
                 this.y -= this.spd[1];
@@ -54,7 +55,14 @@ x$(window).on("load", function() {
             if(right && this.x<canvas.width-37) {
                 this.x += this.spd[0];
             }
-            this.bs.gotoAndStop("r2");
+            //this.bs.gotoAndStop("2");
+            this.step += 0.5;
+            console.log(this.step);
+            this.bs.gotoAndStop(Math.floor(this.step));
+            if(this.step===5) {
+                //console.log("Bam");
+                this.step = 1;
+            }
             
             this.bs.x = this.x;
             this.bs.y = this.y;

@@ -17,12 +17,19 @@ Your Course
 -----------
 
 1) Gossip Blogs
+
 2) Photo Blogs
+
 3) DeviantART
+
 4) Youtube
+
 5) Twitter
+
 6) Skype
+
 7) Great Firewall of China(Yes, it's a physical place)
+
 8) 4Chan
 
 Nerd Stuff

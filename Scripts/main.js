@@ -168,7 +168,7 @@ x$(window).on("load", function() {
         pImg.onerror = function(e) {
             console.log(e);
         };
-        pImg.src = "./Graphics/mudkipSprites3.png";
+        pImg.src = "./Graphics/nyanSprites1.png";
         window.player = new Player(32,32,pImg);
     }
     init();

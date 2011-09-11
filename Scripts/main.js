@@ -4,7 +4,49 @@ x$(window).on("load", function() {
     if (Touch.isSupported()) { Touch.enable(window.stage); }
     window.bullets = [];
     
+    function findIndex(arr,val) {
+        for(var i in arr) {
+            if(arr[i] == val) {
+                return i;
+            }
+        }
+        return false;
+    }
+    
     spd = [3,3];
+    function Bullet(x,y) {
+        this.x = x;
+        this.y = y;
+        g = new Graphics();
+        //g.beginFill("blue");
+        g.beginLinearGradientFill(["#F00","#0F0","#00F"], [0, 0.5, 1], 0, 0, 0, 8);
+        //g.drawRect(0,0,sW,sH);
+        g.drawRect(0,0,8,8);
+        t = new Shape(g);
+        t.x = this.x+16;
+        //t.y = this.y+(this.y/2)+(8/2);
+        t.y = this.y;
+        /*this.dir = dir;
+        if(this.dir=="l") {
+            this.spd = -3;
+        } else {
+            this.spd = 3;
+        }*/
+        this.spd = 5;
+        this.bul = t;
+        stage.addChild(this.bul);
+        bullets.push(this);
+        this.update = function() {
+            this.x += this.spd;
+            this.bul.x = this.x;
+            if(this.x>canvas.width) {
+                var ind = findIndex(bullets,this);
+                if(ind) {
+                    bullets.splice(ind, 1);
+                }
+            }
+        };
+    }
     
     function Player(x,y,img) {
         this.spd = spd;
@@ -55,6 +97,10 @@ x$(window).on("load", function() {
             if(right && this.x<canvas.width-37) {
                 this.x += this.spd[0];
             }
+            
+            if(space) {
+                new Bullet(this.x+34,this.y+18);
+            }
             //this.bs.gotoAndStop("2");
             this.step += 0.5;
             //console.log(this.step);
@@ -85,6 +131,9 @@ x$(window).on("load", function() {
     }
     window.tick = function() {
         player.update(u,d,l,r,s,sd);
+        for(var i in bullets) {
+            bullets[i].update();
+        }
         stage.update();
     };
     var u,d,l,r,s = false;
@@ -142,9 +191,9 @@ x$(window).on("load", function() {
         }
     });
     function imgLoaded(e) {
+        //player.bit.scaleX = player.bit.scaleY = 0.5;
         //stage.addChild(player.image);
         player.bit = new Bitmap(player.image);
-        //player.bit.scaleX = player.bit.scaleY = 0.5;
         player.bit.x = player.x;
         player.bit.y = player.y;
         stage.addChild(player.bit);

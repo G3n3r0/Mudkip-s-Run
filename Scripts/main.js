@@ -57,7 +57,7 @@ x$(window).on("load", function() {
             }
             //this.bs.gotoAndStop("2");
             this.step += 0.5;
-            console.log(this.step);
+            //console.log(this.step);
             this.bs.gotoAndStop(Math.floor(this.step));
             if(this.step===5) {
                 //console.log("Bam");
@@ -166,9 +166,14 @@ x$(window).on("load", function() {
         pImg = new Image();
         pImg.onload = imgLoaded;
         pImg.onerror = function(e) {
-            console.log(e);
+            //console.log(e);
+            throw e;
         };
-        pImg.src = "./Graphics/nyanSprites1.png";
+        if(confirm("OK for Mudkip\nCancel for Nyan Cat")) {
+            pImg.src = "./Graphics/mudkipSprites3.png";
+        } else {
+            pImg.src = "./Graphics/nyan_cat4.png";
+        }
         window.player = new Player(32,32,pImg);
     }
     init();

@@ -47,6 +47,53 @@ x$(window).on("load", function() {
             }
         };
     }
+    window.enemCount = 0;
+    function addEnems(img) {
+        //alert("Hi");
+        y = Math.floor(Math.random()*canvas.height);
+        //console.log(y);
+        e = new Enemy(y, img);
+        enems.push(e);
+        window.enemCount += 1;
+        if(enemCount<10) {
+            setTimeout(function() {
+                addEnems(img);
+            },1000);
+        }
+    }
+    function Enemy(y, image) {
+        //this.x = 100;
+        this.x = canvas.width;
+        this.y = y;
+        //console.log(y);
+        this.image = image;
+        this.bit = new Bitmap(image);
+        this.bit.x = this.x;
+        this.bit.y = this.y;
+        stage.addChild(this.bit);
+        this.update = function() {
+            if(this.x>0) {
+                this.x -= 3;
+            } else {
+                lose();
+            }
+            this.bit.x = this.x;
+            this.bit.y = this.y;
+            //console.log(this.x,sword.x,sword.x+sW);
+            //if(this.x>=sword.x && this.x<=sword.x+sW) 
+            //console.log(swordCol(this));
+            if(swordCol(this)) {
+                //alert(1);
+                stage.removeChild(this.bit);
+                //enems.remove(this);
+                var ind = findIndex(enems,this);
+                if(ind) {
+                    enems.splice(ind, 1);
+                }
+            }
+        };
+    }
+    
     window.bulletTime = 0;
     function Player(x,y,img) {
         this.spd = spd;
@@ -228,6 +275,8 @@ x$(window).on("load", function() {
             pImg.src = "./Graphics/nyan_cat4.png";
         }
         window.player = new Player(32,32,pImg);
+        eImg = new Image();
+        eImg.onload = enemLoaded;
     }
     init();
 });

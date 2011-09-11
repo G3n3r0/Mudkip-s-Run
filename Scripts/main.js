@@ -19,7 +19,7 @@ x$(window).on("load", function() {
         this.y = y;
         g = new Graphics();
         //g.beginFill("blue");
-        g.beginLinearGradientFill(["#F00","#0F0","#00F"], [0, 0.5, 1], 0, 0, 0, 8);
+        g.beginLinearGradientFill(["#F00", "#FF0" ,"#0F0", "#0FF" ,"#00F"], [0, 0.25, 0.5, 0.75, 1], 0, 0, 0, 8);
         //g.drawRect(0,0,sW,sH);
         g.drawRect(0,0,8,8);
         t = new Shape(g);
@@ -47,7 +47,7 @@ x$(window).on("load", function() {
             }
         };
     }
-    
+    window.bulletTime = 0;
     function Player(x,y,img) {
         this.spd = spd;
         this.img = img;
@@ -98,8 +98,12 @@ x$(window).on("load", function() {
                 this.x += this.spd[0];
             }
             
-            if(space) {
+            if(space && bulletTime<=0) {
                 new Bullet(this.x+34,this.y+18);
+                bulletTime = 12;
+            }
+            if(bulletTime>0) {
+                bulletTime -= 1;
             }
             //this.bs.gotoAndStop("2");
             this.step += 0.5;

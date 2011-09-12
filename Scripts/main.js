@@ -45,44 +45,94 @@ x$(window).on("load", function() {
                     bullets.splice(ind, 1);
                 }
             }
+            for(var i in enems) {
+                en = enems[i];
+                if(E(this.x,en.x,this.y,en.y,8,21,8,28)) {
+                    console.log("Enemy Hit");
+                    this.x = canvas.width+10;
+                    enems.splice(i, 1);
+                    stage.removeChild(en.bs);
+                }
+            }
         };
     }
     window.enemCount = 0;
+    window.enems = [];
     function addEnems(img) {
+        console.log(img);
         //alert("Hi");
-        y = Math.floor(Math.random()*canvas.height);
+        y = Math.floor(Math.random()*(canvas.height-28));
         //console.log(y);
         e = new Enemy(y, img);
         enems.push(e);
         window.enemCount += 1;
-        if(enemCount<10) {
+        //if(enemCount<10) {
             setTimeout(function() {
                 addEnems(img);
-            },1000);
-        }
+            },5000);
+        //}
     }
+    function E(X,x,Y,y,W,w,H,h) { // check collision
+            S = X - x;
+            D = Y - y;
+            F = W + w;
+            G = H + h;
+            return (S * S + D * D <= F * G);
+        }
     function Enemy(y, image) {
+        console.log(this);
         //this.x = 100;
         this.x = canvas.width;
         this.y = y;
         //console.log(y);
         this.image = image;
-        this.bit = new Bitmap(image);
+        /*this.bit = new Bitmap(image);
         this.bit.x = this.x;
         this.bit.y = this.y;
-        stage.addChild(this.bit);
+        stage.addChild(this.bit);*/
+        this.fdata = {
+            1: 0,
+            2: 1,
+            3: 2,
+            4: 3
+        };
+        this.sSheet = new SpriteSheet(this.image, 21, 28,this.fdata);
+        this.bs = new BitmapSequence(this.sSheet);
+        this.bs.y = this.y;
+        this.bs.x = this.x;
+        this.bs.gotoAndStop("1");
+        stage.addChild(this.bs);
+        this.step = 1;
         this.update = function() {
-            if(this.x>0) {
+            /*if(this.x>0) {
                 this.x -= 3;
             } else {
                 lose();
+            }*/
+            this.step += 0.5;
+            //console.log(this.step);
+            this.bs.gotoAndStop(Math.floor(this.step));
+            if(this.step===4) {
+                //console.log("Bam");
+                this.step = 1;
             }
-            this.bit.x = this.x;
-            this.bit.y = this.y;
+            if(this.x>0) {
+                this.x -= 3;
+            } else {
+                stage.removeChild(this.bs);
+                //enems.remove(this);
+                var ind = findIndex(enems,this);
+                if(ind) {
+                    enems.splice(ind, 1);
+                }
+            }
+            //console.log(this.x,this.y,this.step);
+            this.bs.x = this.x;
+            this.bs.y = this.y;
             //console.log(this.x,sword.x,sword.x+sW);
             //if(this.x>=sword.x && this.x<=sword.x+sW) 
             //console.log(swordCol(this));
-            if(swordCol(this)) {
+            /*if(swordCol(this)) {
                 //alert(1);
                 stage.removeChild(this.bit);
                 //enems.remove(this);
@@ -90,6 +140,9 @@ x$(window).on("load", function() {
                 if(ind) {
                     enems.splice(ind, 1);
                 }
+            }*/
+            if(E(this.x,player.x,this.y,player.y,21,37,28,36)) {
+                console.log("Player Hit");
             }
         };
     }
@@ -167,7 +220,7 @@ x$(window).on("load", function() {
     }
     
     window.enemCount = 0;
-    function addEnems(img) {
+    /*function addEnems(img) {
         //alert("Hi");
         y = Math.floor(Math.random()*canvas.height);
         //console.log(y);
@@ -179,11 +232,17 @@ x$(window).on("load", function() {
                 addEnems(img);
             },1000);
         }
+    }*/
+    function enemLoaded(e) {
+        addEnems(this);
     }
     window.tick = function() {
         player.update(u,d,l,r,s,sd);
         for(var i in bullets) {
             bullets[i].update();
+        }
+        for(var j in enems) {
+            enems[j].update();
         }
         stage.update();
     };
@@ -271,12 +330,14 @@ x$(window).on("load", function() {
         };
         if(confirm("OK for Mudkip\nCancel for Nyan Cat")) {
             pImg.src = "./Graphics/mudkipSprites3.png";
+            //pImg.src = "./Graphics/enemSprite1.png";
         } else {
             pImg.src = "./Graphics/nyan_cat4.png";
         }
         window.player = new Player(32,32,pImg);
         eImg = new Image();
         eImg.onload = enemLoaded;
+        eImg.src = "./Graphics/enemSprite1.png";
     }
     init();
 });

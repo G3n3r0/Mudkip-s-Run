@@ -1,8 +1,22 @@
-x$(window).on("load", function() {
-    window.$ = x$;
+//x$(window).on("load", function() {
+window.onload = function() {
+    window.addEventListener('focus', function() {
+        //document.title = 'focused';
+        play();
+    });
+    window.addEventListener('blur', function() {
+        //document.title = 'not focused';
+        pause();
+    });
+    //window.$ = x$;
     
     if (Touch.isSupported()) { Touch.enable(window.stage); }
     window.bullets = [];
+    if(!console) {
+        console = {
+            log: function(){}
+        };
+    }
     
     function findIndex(arr,val) {
         for(var i in arr) {
@@ -13,7 +27,83 @@ x$(window).on("load", function() {
         return false;
     }
     
-    spd = [3,3];
+    //spd = [3,3];
+    window.totalKills = 0;
+    spd = [1.5,1.5];
+    function getGrade(perc) {
+        var g;
+        if(perc>=98) {
+            g = "A+";
+        } else if(perc<=97 && perc>=94) {
+            g = "A";
+        } else if(perc<=93 && perc>=90) {
+            g = "A-";
+        } else if(perc<=89 && perc>=85) {
+            g = "B+";
+        } else if(perc<=84 && perc>=80) {
+            g = "B";
+        } else if(perc<=79 && perc>=75) {
+            g = "B-";
+        } else if(perc<=74 && perc>=70) {
+            g = "C+";
+        } else if(perc<=69 && perc>=65) {
+            g = "C";
+        } else if(perc<=64 && perc>=60) {
+            g = "C-";
+        } else if(perc<=59 && perc>=50) {
+            g = "D";
+        } else if(perc<=49 && perc>=0) {
+            g = "F";
+        }
+        return g;
+    }
+    //console.log(getGrade(78));
+    function resetLevel() {
+        for(var i in stage.children) {
+            stage.removeChild(stage.children[i]);
+        }
+        enems = [];
+        bullets = [];
+        window.totalKills = 0;
+        window.killCount = 0;
+        window.enemCount = 0;
+        u = false;
+        d = false;
+        l = false;
+        r = false;
+        s = false;
+        delete player;
+        clearTimeout(window.enemTimeout);
+        //running = true;
+        //init();
+    }
+    function pause() {
+        running = false;
+    }
+    function play() {
+        running = true;
+    }
+    function lose() {
+        Ticker.setPaused(true);
+        var perc = (window.totalKills/window.enemCount)*100;
+        var lett = getGrade(perc);
+        //running = false;
+        pause();
+        //alert(lett);
+        resetLevel();
+        stg = "You no "+lett+"sian. You Asian!\nContinue?";
+        f = confirm(stg);
+        console.log("a",f,!!f);
+        if(f) {
+            //resetLevel();
+            running = true;
+            init();
+            //running = true;
+        } else {
+            running = false;
+        }
+        console.log(running,window.running);
+    }
     function Bullet(x,y) {
         this.x = x;
         this.y = y;
@@ -47,11 +137,27 @@ x$(window).on("load", function() {
             }
             for(var i in enems) {
                 en = enems[i];
-                if(E(this.x,en.x,this.y,en.y,8,21,8,28)) {
+                var a = {
+                    x: this.x,
+                    y: this.y,
+                    width: 8,
+                    height: 8
+                };
+                var b = {
+                    x: en.x,
+                    y: en.y,
+                    width: 21,
+                    height: 28
+                };
+                //if(E(this.x,en.x,this.y,en.y,8,21,8,28)) {
+                if(E(a,b)) {
                     console.log("Enemy Hit");
                     this.x = canvas.width+10;
                     enems.splice(i, 1);
                     stage.removeChild(en.bs);
+                    window.killCount += 1;
+                    window.totalKills = window.killCount;
+                    //console.log(killCount);
                 }
             }
         };
@@ -59,7 +165,7 @@ x$(window).on("load", function() {
     window.enemCount = 0;
     window.enems = [];
     function addEnems(img) {
-        console.log(img);
+        //console.log(img);
         //alert("Hi");
         y = Math.floor(Math.random()*(canvas.height-28));
         //console.log(y);
@@ -67,20 +173,28 @@ x$(window).on("load", function() {
         enems.push(e);
         window.enemCount += 1;
         //if(enemCount<10) {
-            setTimeout(function() {
+            window.enemTimeout = setTimeout(function() {
                 addEnems(img);
-            },5000);
+            },3000);
         //}
     }
-    function E(X,x,Y,y,W,w,H,h) { // check collision
-            S = X - x;
-            D = Y - y;
-            F = W + w;
-            G = H + h;
-            return (S * S + D * D <= F * G);
-        }
+    /*function E(X,x,Y,y,W,w,H,h) { // check collision
+        S = X - x;
+        D = Y - y;
+        F = W + w;
+        G = H + h;
+        return (S * S + D * D <= F * G);
+    }*/
+    function E(a, b) {
+        return !(
+            ((a.y + a.height) < (b.y)) ||
+            (a.y > (b.y + b.height)) ||
+            ((a.x + a.width) < b.x) ||
+            (a.x > (b.x + b.width))
+        );
+    }
     function Enemy(y, image) {
-        console.log(this);
+        //console.log(this);
         //this.x = 100;
         this.x = canvas.width;
         this.y = y;
@@ -109,7 +223,7 @@ x$(window).on("load", function() {
             } else {
                 lose();
             }*/
-            this.step += 0.5;
+            this.step += 0.25;
             //console.log(this.step);
             this.bs.gotoAndStop(Math.floor(this.step));
             if(this.step===4) {
@@ -117,7 +231,8 @@ x$(window).on("load", function() {
                 this.step = 1;
             }
             if(this.x>0) {
-                this.x -= 3;
+                //this.x -= 1.5;
+                this.x -= spd[0]+1;
             } else {
                 stage.removeChild(this.bs);
                 //enems.remove(this);
@@ -141,8 +256,23 @@ x$(window).on("load", function() {
                     enems.splice(ind, 1);
                 }
             }*/
-            if(E(this.x,player.x,this.y,player.y,21,37,28,36)) {
+            //if(E(this.x,player.x,this.y,player.y,21,37,28,36)) {
+            var a = {
+                x: this.x,
+                y: this.y,
+                width: 21,
+                height: 28
+            };
+            var b = {
+                x: player.x,
+                y: player.y,
+                width: 37,
+                height: 36
+            };
+            if(E(a,b)) {
+                lose();
                 console.log("Player Hit");
+                window.running = false;
             }
         };
     }
@@ -206,7 +336,7 @@ x$(window).on("load", function() {
                 bulletTime -= 1;
             }
             //this.bs.gotoAndStop("2");
-            this.step += 0.5;
+            this.step += 0.25;
             //console.log(this.step);
             this.bs.gotoAndStop(Math.floor(this.step));
             if(this.step===5) {
@@ -233,22 +363,46 @@ x$(window).on("load", function() {
             },1000);
         }
     }*/
+    window.killCount = 0;
+    window.neededKills = 10;
     function enemLoaded(e) {
         addEnems(this);
     }
+    window.running = true;
     window.tick = function() {
-        player.update(u,d,l,r,s,sd);
-        for(var i in bullets) {
-            bullets[i].update();
-        }
-        for(var j in enems) {
-            enems[j].update();
+        console.log(running);
+        if(running) {
+            if(player) {
+                player.update(u,d,l,r,s,sd);
+            }
+            for(var i in bullets) {
+                bullets[i].update();
+            }
+            console.log(enems.length);
+            if(enems.length>0) {
+                for(var j in enems) {
+                    enems[j].update();
+                }
+            }
+            if(killCount>=neededKills) {
+                neededKills *= 2;
+                killCount = 0;
+            }
+            stage.removeChild(sco);
+            //console.log(neededKills,killCount);
+            window.sco = new Text(neededKills-killCount, "18px Arial", "#FFF");
+            sco.x = canvas.width-sco.getMeasuredWidth()-10;
+            sco.y = sco.getMeasuredLineHeight();
+            stage.addChild(sco);
+        } else {
+            console.log("No run.");
         }
         stage.update();
     };
     var u,d,l,r,s = false;
     var sd = "r";
-    $("*").on("keydown", function(e) {
+    //$("*").on("keydown", function(e) {
+    document.onkeydown = function(e) {
         //e.preventDefault();
         //e.stopPropagation();
         //console.log(e);
@@ -275,8 +429,10 @@ x$(window).on("load", function() {
             e.stopPropagation();
             s = true;
         }
-    });
-    $("*").on("keyup", function(e) {
+    //});
+    };
+    //$("*").on("keyup", function(e) {
+    document.onkeyup = function(e) {
         //console.log(e);
         if(e.which===38) {
             e.preventDefault();
@@ -299,7 +455,8 @@ x$(window).on("load", function() {
             e.stopPropagation();
             s = false;
         }
-    });
+    //});
+    };
     function imgLoaded(e) {
         //player.bit.scaleX = player.bit.scaleY = 0.5;
         //stage.addChild(player.image);
@@ -308,11 +465,12 @@ x$(window).on("load", function() {
         player.bit.y = player.y;
         stage.addChild(player.bit);
         stage.update();
-        Ticker.setFPS(12);
+        Ticker.setFPS(24);
         Ticker.addListener(window);
     }
     function init() {
-        canvas = $("#c")[0];
+        //canvas = $("#c")[0];
+        canvas = document.getElementById("c");
         window.stage = new Stage(canvas);
         stage.enableMouseOver(10);
         /*g = new Graphics();
@@ -338,6 +496,12 @@ x$(window).on("load", function() {
         eImg = new Image();
         eImg.onload = enemLoaded;
         eImg.src = "./Graphics/enemSprite1.png";
+        
+        window.sco = new Text(neededKills-killCount, "18px Arial", "#FFF");
+        sco.x = canvas.width-sco.getMeasuredWidth()-10;
+        sco.y = sco.getMeasuredLineHeight();
+        stage.addChild(sco);
     }
     init();
-});
+//});
+};

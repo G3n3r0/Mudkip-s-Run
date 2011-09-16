@@ -1,5 +1,6 @@
 //x$(window).on("load", function() {
 window.onload = function() {
+    //alert("Derp!");
     window.addEventListener('focus', function() {
         //document.title = 'focused';
         play();
@@ -10,13 +11,16 @@ window.onload = function() {
     });
     //window.$ = x$;
     
-    if (Touch.isSupported()) { Touch.enable(window.stage); }
+    //if (Touch.isSupported()) { Touch.enable(window.stage); }
     window.bullets = [];
-    if(!console) {
-        console = {
-            log: function(){}
+    //alert(!!!window.console);
+    if(!!!window.console) {
+        //alert("Durrp!");
+        window.console = {
+            log: function(e){alert(e);}
         };
     }
+    //console.log("Duh dah. Duh da. Duh da duh da duh da!");
     
     function findIndex(arr,val) {
         for(var i in arr) {
@@ -32,7 +36,7 @@ window.onload = function() {
     spd = [1.5,1.5];
     function getGrade(perc) {
         var g;
-        if(perc>=98) {
+        /*if(perc>=98) {
             g = "A+";
         } else if(perc<=97 && perc>=94) {
             g = "A";
@@ -53,6 +57,34 @@ window.onload = function() {
         } else if(perc<=59 && perc>=50) {
             g = "D";
         } else if(perc<=49 && perc>=0) {
+            g = "F";
+        }*/
+        /*if(perc<=100 && perc>=90) {
+            g = "A";
+        } else if(perc<=89 && perc>=75) {
+            g = "B";
+        } else if(perc<=74 && perc>=60) {
+            g = "C";
+        } else if(perc<=59 && perc>=50) {
+            g = "D";
+        } else if(perc<=49 && perc>=0) {
+            g = "F";
+        }*/
+        /*64;
+        73;
+        82;
+        91;
+        100;*/
+        console.log(perc);
+        if(perc>=98) {
+            g = "A";
+        } else if(perc>=91) {
+            g = "B";
+        } else if(perc>=82) {
+            g = "C";
+        } else if(perc>=73) {
+            g = "D";
+        } else if(perc>=0) {
             g = "F";
         }
         return g;
@@ -91,18 +123,70 @@ window.onload = function() {
         pause();
         //alert(lett);
         resetLevel();
-        stg = "You no "+lett+"sian. You Asian!\nContinue?";
-        f = confirm(stg);
-        console.log("a",f,!!f);
+        //console.log(u,d,l,r,s);
+        urls = {
+            A: "http://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=25727955",
+            B: "http://pull.imgfave.netdna-cdn.com/image_cache/1312249185739669.jpg",
+            C: "http://chzmemebase.files.wordpress.com/2011/04/memes-thats-why-their-navy-sucks.jpg",
+            D: "http://images.memegenerator.net/instances/320x/10036413.jpg",
+            F: "http://chzmemebase.files.wordpress.com/2011/01/memes-you-drop-f-bomb-in-school.jpg"
+        };
+        console.log(lett);
+        url = urls[lett];
+        image = new Image();
+        image.onload = function(e) {
+            //console.log(image.width,image.height);
+            bit = new Bitmap(image);
+            sw = canvas.width/image.width;
+            sh = canvas.height/image.height;
+            //console.log(sw,image.width,image.width/canvas.width);
+            bit.scaleX = sw;
+            bit.scaleY = sh;
+            bit.mouseEnabled = true;
+            bit.x = this.x;
+            bit.y = this.y;
+            //console.log(canvas.onclick);
+            canvas.onclick = function(e) {
+                //alert("Durr!!!");
+                f = confirm("Continue?");
+                //console.log("a",f,!!f);
+                if(f) {
+                    stage.removeChild(bit);
+                    canvas.onclick = null;
+                    //resetLevel();
+                    running = true;
+                    Ticker.setPaused(false);
+                    init();
+                    //running = true;
+                } else {
+                    running = false;
+                }
+            };
+            stage.addChild(bit);
+            stage.update();
+        };
+        image.src = url;
+        stgs = {
+            A: "I no am disappoint son. You make proud.",
+            B: "You brush with Oral-B? Son I am disappoint.",
+            C: "You want sail the seven C's? No! You sail seven A's!",
+            D: "You get D? Now, I D-isown you!",
+            F: "[sob]Son, you make big disappoint. You leave now."
+        };
+        //stg = "You no "+lett+"sian. You Asian!\nContinue?";
+        stg = stgs[lett]+"\nContinue?";
+        /*f = confirm(stg);
+        //console.log("a",f,!!f);
         if(f) {
             //resetLevel();
             running = true;
-            init();
+            Ticker.setPaused(false);
+            //init();
             //running = true;
         } else {
             running = false;
-        }
-        console.log(running,window.running);
+        }*/
+        //console.log(running,window.running);
     }
     function Bullet(x,y) {
         this.x = x;
@@ -156,7 +240,7 @@ window.onload = function() {
                     enems.splice(i, 1);
                     stage.removeChild(en.bs);
                     window.killCount += 1;
-                    window.totalKills = window.killCount;
+                    window.totalKills += 1;
                     //console.log(killCount);
                 }
             }
@@ -370,7 +454,7 @@ window.onload = function() {
     }
     window.running = true;
     window.tick = function() {
-        console.log(running);
+        //console.log(running);
         if(running) {
             if(player) {
                 player.update(u,d,l,r,s,sd);
@@ -378,7 +462,7 @@ window.onload = function() {
             for(var i in bullets) {
                 bullets[i].update();
             }
-            console.log(enems.length);
+            //console.log(enems.length);
             if(enems.length>0) {
                 for(var j in enems) {
                     enems[j].update();
@@ -458,6 +542,8 @@ window.onload = function() {
     //});
     };
     function imgLoaded(e) {
+        //console.log("So I herd u like Mudkips.");
+        //console.log(window.player);
         //player.bit.scaleX = player.bit.scaleY = 0.5;
         //stage.addChild(player.image);
         player.bit = new Bitmap(player.image);
@@ -469,22 +555,24 @@ window.onload = function() {
         Ticker.addListener(window);
     }
     function init() {
+        //alert("Laheim!");
         //canvas = $("#c")[0];
         canvas = document.getElementById("c");
         window.stage = new Stage(canvas);
         stage.enableMouseOver(10);
         /*g = new Graphics();
         g.beginFill("silver");
-        g.drawRect(0,0,sW,sH);
+        g.drawRect(0,0,50,50);
         window.sword = new Shape(g);
-        sword.x = -100;
-        sword.y = -100;
+        sword.x = 100;
+        sword.y = 100;
         stage.addChild(sword);*/
         pImg = new Image();
         pImg.onload = imgLoaded;
-        pImg.onerror = function(e) {
+        pImg.onerror = function(e,a) {
             //console.log(e);
-            throw e;
+            //throw e;
+            console.log(e,a);
         };
         if(confirm("OK for Mudkip\nCancel for Nyan Cat")) {
             pImg.src = "./Graphics/mudkipSprites3.png";
@@ -493,6 +581,7 @@ window.onload = function() {
             pImg.src = "./Graphics/nyan_cat4.png";
         }
         window.player = new Player(32,32,pImg);
+        console.log(player);
         eImg = new Image();
         eImg.onload = enemLoaded;
         eImg.src = "./Graphics/enemSprite1.png";
@@ -502,6 +591,17 @@ window.onload = function() {
         sco.y = sco.getMeasuredLineHeight();
         stage.addChild(sco);
     }
+    function titleScreen(imgURL) {
+        image = new Image();
+        image.onload = function(e) {
+            //console.log(image.width,image.height);
+            var bit = new Bitmap(image);
+            bit.scaleX = bit.scaleY = 0.5;
+            bit.x = bit.y = 0;
+            stage.addChild(bit);
+        };
+    }
+    //alert("Durr!");
     init();
 //});
 };

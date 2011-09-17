@@ -148,7 +148,7 @@ window.onload = function() {
             //console.log(canvas.onclick);
             canvas.onclick = function(e) {
                 //alert("Durr!!!");
-                f = confirm("Continue?");
+                f = g||confirm("Continue?");
                 //console.log("a",f,!!f);
                 if(f) {
                     stage.removeChild(bit);
@@ -554,12 +554,15 @@ window.onload = function() {
         Ticker.setFPS(24);
         Ticker.addListener(window);
     }
-    function init() {
+    canvas = document.getElementById("c");
+    window.stage = new Stage(canvas);
+    stage.enableMouseOver(10);
+    function init(g) {
         //alert("Laheim!");
         //canvas = $("#c")[0];
-        canvas = document.getElementById("c");
+        /*canvas = document.getElementById("c");
         window.stage = new Stage(canvas);
-        stage.enableMouseOver(10);
+        stage.enableMouseOver(10);*/
         /*g = new Graphics();
         g.beginFill("silver");
         g.drawRect(0,0,50,50);
@@ -591,6 +594,21 @@ window.onload = function() {
         sco.y = sco.getMeasuredLineHeight();
         stage.addChild(sco);
     }
+    function charSelect(imgURL) {
+        var fdata = {
+            1: 0,
+            2:1
+        };
+        var image = new Image();
+        image.onload = function(e) {
+            var sSheet = new SpriteSheet(image, 123, 128,fdata);
+            var bs = new BitmapSequence(sSheet);
+            mk.y = this.y;
+            mk.x = this.x;
+            mk.gotoAndStop("1");
+            stage.addChild(mk);
+        };
+    }
     function titleScreen(imgURL) {
         image = new Image();
         image.onload = function(e) {
@@ -598,10 +616,20 @@ window.onload = function() {
             var bit = new Bitmap(image);
             bit.scaleX = bit.scaleY = 0.5;
             bit.x = bit.y = 0;
+            bit.mouseEnabled = true;
+            bit.onClick = function(e) {
+                stage.removeChild(this);
+                init();
+                //stage.update();
+            };
             stage.addChild(bit);
+            stage.update();
         };
+        image.src = imgURL;
     }
     //alert("Durr!");
-    init();
+    //init();
+    //pause();
+    titleScreen("Graphics/mudkipTitleScreen.png");
 //});
 };

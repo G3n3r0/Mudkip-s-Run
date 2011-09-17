@@ -148,7 +148,7 @@ window.onload = function() {
             //console.log(canvas.onclick);
             canvas.onclick = function(e) {
                 //alert("Durr!!!");
-                f = g||confirm("Continue?");
+                f = confirm("Continue?");
                 //console.log("a",f,!!f);
                 if(f) {
                     stage.removeChild(bit);
@@ -577,7 +577,8 @@ window.onload = function() {
             //throw e;
             console.log(e,a);
         };
-        if(confirm("OK for Mudkip\nCancel for Nyan Cat")) {
+        //if(confirm("OK for Mudkip\nCancel for Nyan Cat")) {
+        if(g) {
             pImg.src = "./Graphics/mudkipSprites3.png";
             //pImg.src = "./Graphics/enemSprite1.png";
         } else {
@@ -595,19 +596,45 @@ window.onload = function() {
         stage.addChild(sco);
     }
     function charSelect(imgURL) {
-        var fdata = {
+        //alert("My name is Juan Cummins.");
+        /*var fdata = {
             1: 0,
             2:1
-        };
+        };*/
         var image = new Image();
         image.onload = function(e) {
-            var sSheet = new SpriteSheet(image, 123, 128,fdata);
-            var bs = new BitmapSequence(sSheet);
-            mk.y = this.y;
-            mk.x = this.x;
-            mk.gotoAndStop("1");
+            var w = 123;
+            var h = 128;
+            var sSheet = new SpriteSheet(this, w, h);
+            var mk = new BitmapSequence(sSheet);
+            mk.x = (canvas.width/2)-w;
+            mk.y = (canvas.height/2)-(h/2);
+            mk.gotoAndStop(0);
+            mk.mouseEnabled = true;
+            
+            mk.onClick = function(e) {
+                stage.removeChild(nc);
+                stage.removeChild(mk);
+                init(true);
+            };
+            
+            var nc = mk.clone();
+            nc.gotoAndStop(1);
+            nc.x = canvas.width/2;
+            nc.y = (canvas.height/2)-(h/2);
+            nc.mouseEnabled = true;
+            
+            nc.onClick = function(e) {
+                stage.removeChild(nc);
+                stage.removeChild(mk);
+                init(false);
+            };
+            
             stage.addChild(mk);
+            stage.addChild(nc);
+            stage.update();
         };
+        image.src = imgURL;
     }
     function titleScreen(imgURL) {
         image = new Image();
@@ -619,7 +646,8 @@ window.onload = function() {
             bit.mouseEnabled = true;
             bit.onClick = function(e) {
                 stage.removeChild(this);
-                init();
+                //init();
+                charSelect("Graphics/faces.png");
                 //stage.update();
             };
             stage.addChild(bit);

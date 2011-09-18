@@ -1,5 +1,15 @@
 //x$(window).on("load", function() {
 window.onload = function() {
+    /*window.onbeforeunload = function() {
+        return 'U dont liek mudkipz?';
+    }*/
+    setTimeout(function() {
+        window.scrollTo(0,1);
+    }, 100);
+    /*window.ondevicemotion = function(e) {
+        var m = e.accelerationIncludingGravity;
+        //console.log(m.x,m.y,m.z,e.rotationRate);
+    };*/
     var titlePic = "Graphics/mudkipTitleScreen.png";
     //alert("Derp!");
     window.addEventListener('focus', function() {
@@ -21,6 +31,7 @@ window.onload = function() {
             log: function(e){alert(e);}
         };
     }
+    var faces = "Graphics/faces.png";
     //console.log("Duh dah. Duh da. Duh da duh da duh da!");
     
     function findIndex(arr,val) {
@@ -156,12 +167,13 @@ window.onload = function() {
             bit.x = this.x;
             bit.y = this.y;
             //console.log(canvas.onclick);
-            canvas.onclick = function(e) {
+            /*canvas.onclick = function(e) {
                 //alert("Durr!!!");
                 f = confirm("Continue?");
                 //console.log("a",f,!!f);
                 if(f) {
-                    stage.removeChild(bit);
+                    //stage.removeChild(bit);
+                    stage.removeAllChildren();
                     canvas.onclick = null;
                     //resetLevel();
                     running = true;
@@ -176,32 +188,53 @@ window.onload = function() {
                     //Ticker.setPaused(false);
                     titleScreen(titlePic);
                 }
-            };
+            };*/
             
             var g = new Graphics();
             g.beginFill("rgba(0,128,0,0.5)");
             g.drawRoundRect(0,0,128,64,10);
             var y = new Shape(g);
             y.x = (canvas.width/4)-128/2;
-            y.y = (canvas.height/2)+36;
+            y.y = (canvas.height/2)+18;
             y.shadow = new Shadow("#000", 0, 0, 10);
+            y.mouseEnabled = true;
+            y.onClick = function(e) {
+                stage.removeAllChildren();
+                running = true;
+                //init();
+                charSelect(faces);
+            }
             
             var h = new Graphics();
             h.beginFill("rgba(255,0,0,0.5)");
             h.drawRoundRect(0,0,128,64,10);
             var n = new Shape(h);
             n.x = canvas.width/2+canvas.width/4-128/2;
-            n.y = (canvas.height/2)+36;
+            n.y = (canvas.height/2)+18;
             n.shadow = new Shadow("#000", 0, 0, 10);
+            n.mouseEnabled = true;
+            n.onClick = function(e) {
+                stage.removeAllChildren();
+                titleScreen(titlePic);
+            }
             
             var cont = new Text("Continue?", "36px Arial", "#FFF");
             cont.x = canvas.width/2-cont.getMeasuredWidth()/2;
-            cont.y = canvas.height/2;
+            cont.y = canvas.height/2-18/2;
+            
+            var q = new Graphics();
+            q.beginFill("rgba(0,0,0,0.5)");
+            console.log(cont.getMeasuredWidth(),cont.getMeasuredLineHeight());
+        q.drawRoundRect(0,0,cont.getMeasuredWidth(),cont.getMeasuredLineHeight(),10);
+            var cb = new Shape(q);
+            cb.x = cont.x;
+            cb.y = cont.y-cont.getMeasuredLineHeight()+5;
             
             stage.removeAllChildren();
             stage.addChild(bit);
             stage.addChild(y);
             stage.addChild(n);
+            stage.addChild(cb);
             stage.addChild(cont);
             stage.update();
         };
@@ -533,28 +566,38 @@ window.onload = function() {
     document.onkeydown = function(e) {
         //e.preventDefault();
         //e.stopPropagation();
-        //console.log(e);
-        if(e.which===38) {
-            e.preventDefault();
-            e.stopPropagation();
+        //console.log(e.which);
+        if(e.which===38 || e.which===87) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             u = true;
-        } else if(e.which===40) {
-            e.preventDefault();
-            e.stopPropagation();
+        } else if(e.which===40 || e.which===83) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             d = true;
-        } else if(e.which===37) {
-            e.preventDefault();
-            e.stopPropagation();
+        } else if(e.which===37 || e.which===65) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             l = true;
             sd = "l";
-        } else if(e.which===39) {
-            e.preventDefault();
-            e.stopPropagation();
+        } else if(e.which===39 || e.which===68) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             r = true;
             sd = "r";
-        } else if(e.which===32) {
-            e.preventDefault();
-            e.stopPropagation();
+        } else if(e.which===32 || e.which===90) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             s = true;
         }
     //});
@@ -562,25 +605,35 @@ window.onload = function() {
     //$("*").on("keyup", function(e) {
     document.onkeyup = function(e) {
         //console.log(e);
-        if(e.which===38) {
-            e.preventDefault();
-            e.stopPropagation();
+        if(e.which===38 || e.which===87) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             u = false;
-        } else if(e.which===40) {
-            e.preventDefault();
-            e.stopPropagation();
+        } else if(e.which===40 || e.which===83) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             d = false;
-        } else if(e.which===37) {
-            e.preventDefault();
-            e.stopPropagation();
+        } else if(e.which===37 || e.which===65) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             l = false;
-        } else if(e.which===39) {
-            e.preventDefault();
-            e.stopPropagation();
+        } else if(e.which===39 || e.which===68) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             r = false;
-        } else if(e.which===32) {
-            e.preventDefault();
-            e.stopPropagation();
+        } else if(e.which===32 || e.which===90) {
+            if(!e.custom) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             s = false;
         }
     //});
@@ -720,7 +773,7 @@ window.onload = function() {
             bit.onClick = function(e) {
                 stage.removeChild(this);
                 //init();
-                charSelect("Graphics/faces.png");
+                charSelect(faces);
                 //stage.update();
             };
             stage.addChild(bit);
@@ -732,5 +785,21 @@ window.onload = function() {
     //init();
     //pause();
     titleScreen(titlePic);
+    
+    /*function g(id) {
+        return document.getElementById(id);
+    }
+    g("hid").focus();
+    /*g("u").onmousedown = function(e) {
+        /*document.onkeydown({which:38,custom:true});
+        document.onkeydown({which:38,custom:true});
+        document.onkeyup({which:38,custom:true});
+        player.update(true,false,false,false,false);
+        stage.update();
+        //alert("Durr")
+    };
+    /*g("u").onmouseup = function(e) {
+        document.onkeyup({which:38,custom:true});
+    };*/
 //});
 };

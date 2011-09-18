@@ -1,13 +1,14 @@
 //x$(window).on("load", function() {
 window.onload = function() {
+    var titlePic = "Graphics/mudkipTitleScreen.png";
     //alert("Derp!");
     window.addEventListener('focus', function() {
         //document.title = 'focused';
-        play();
+            play();
     });
     window.addEventListener('blur', function() {
         //document.title = 'not focused';
-        pause();
+            pause();
     });
     //window.$ = x$;
     
@@ -91,9 +92,13 @@ window.onload = function() {
     }
     //console.log(getGrade(78));
     function resetLevel() {
-        for(var i in stage.children) {
+        console.log(stage.children);
+        /*for(var i in stage.children) {
+            console.log(stage.children[i]);
             stage.removeChild(stage.children[i]);
-        }
+            console.log(stage.children);
+        }*/
+        stage.removeAllChildren();
         enems = [];
         bullets = [];
         window.totalKills = 0;
@@ -104,19 +109,24 @@ window.onload = function() {
         l = false;
         r = false;
         s = false;
-        delete player;
+        //delete player;
+        player = null;
         clearTimeout(window.enemTimeout);
         //running = true;
         //init();
     }
     function pause() {
         running = false;
+        clearTimeout(window.enemTimeout);
     }
     function play() {
         running = true;
+        window.enemTimeout = setTimeout(function() {
+            addEnems(img);
+        },3000);
     }
     function lose() {
-        Ticker.setPaused(true);
+        //Ticker.setPaused(true);
         var perc = (window.totalKills/window.enemCount)*100;
         var lett = getGrade(perc);
         //running = false;
@@ -155,14 +165,44 @@ window.onload = function() {
                     canvas.onclick = null;
                     //resetLevel();
                     running = true;
-                    Ticker.setPaused(false);
+                    //Ticker.setPaused(false);
                     init();
                     //running = true;
                 } else {
-                    running = false;
+                    //running = false;
+                    canvas.onclick = null;
+                    stage.removeAllChildren();
+                    //running = true;
+                    //Ticker.setPaused(false);
+                    titleScreen(titlePic);
                 }
             };
+            
+            var g = new Graphics();
+            g.beginFill("rgba(0,128,0,0.5)");
+            g.drawRoundRect(0,0,128,64,10);
+            var y = new Shape(g);
+            y.x = (canvas.width/4)-128/2;
+            y.y = (canvas.height/2)+36;
+            y.shadow = new Shadow("#000", 0, 0, 10);
+            
+            var h = new Graphics();
+            h.beginFill("rgba(255,0,0,0.5)");
+            h.drawRoundRect(0,0,128,64,10);
+            var n = new Shape(h);
+            n.x = canvas.width/2+canvas.width/4-128/2;
+            n.y = (canvas.height/2)+36;
+            n.shadow = new Shadow("#000", 0, 0, 10);
+            
+            var cont = new Text("Continue?", "36px Arial", "#FFF");
+            cont.x = canvas.width/2-cont.getMeasuredWidth()/2;
+            cont.y = canvas.height/2;
+            
+            stage.removeAllChildren();
             stage.addChild(bit);
+            stage.addChild(y);
+            stage.addChild(n);
+            stage.addChild(cont);
             stage.update();
         };
         image.src = url;
@@ -257,9 +297,9 @@ window.onload = function() {
         enems.push(e);
         window.enemCount += 1;
         //if(enemCount<10) {
-            window.enemTimeout = setTimeout(function() {
-                addEnems(img);
-            },3000);
+        window.enemTimeout = setTimeout(function() {
+            addEnems(img);
+        },3000);
         //}
     }
     /*function E(X,x,Y,y,W,w,H,h) { // check collision
@@ -456,6 +496,7 @@ window.onload = function() {
     window.tick = function() {
         //console.log(running);
         if(running) {
+            //console.log(player,typeof player);
             if(player) {
                 player.update(u,d,l,r,s,sd);
             }
@@ -463,10 +504,13 @@ window.onload = function() {
                 bullets[i].update();
             }
             //console.log(enems.length);
-            if(enems.length>0) {
+            /*if(enems.length>0) {
                 for(var j in enems) {
                     enems[j].update();
                 }
+            }*/
+            for(var j = 0; j<enems.length;j++) {
+                enems[j].update();
             }
             if(killCount>=neededKills) {
                 neededKills *= 2;
@@ -478,9 +522,9 @@ window.onload = function() {
             sco.x = canvas.width-sco.getMeasuredWidth()-10;
             sco.y = sco.getMeasuredLineHeight();
             stage.addChild(sco);
-        } else {
+        }/* else {
             console.log("No run.");
-        }
+        }*/
         stage.update();
     };
     var u,d,l,r,s = false;
@@ -607,36 +651,65 @@ window.onload = function() {
             var h = 128;
             var sSheet = new SpriteSheet(this, w, h);
             var mk = new BitmapSequence(sSheet);
-            mk.x = (canvas.width/2)-w;
+            //mk.x = (canvas.width/2)-w;
+            mk.x = (canvas.width/4)-w/2;
             mk.y = (canvas.height/2)-(h/2);
             mk.gotoAndStop(0);
             mk.mouseEnabled = true;
             
+            var g = new Graphics();
+            //g.beginFill("blue");
+            //g.beginLinearGradientFill(["rgba(255,0,0,0.5)", "#FF0" ,"#0F0", "#0FF" ,"#00F"], [0, 0.25, 0.5, 0.75, 1], 0, 0, 0, h);
+            g.beginLinearGradientFill(["rgba(255,0,0,0.5)", "rgba(255,255,0,0.5)" ,"rgba(0,255,0,0.5)", "rgba(0,255,255,0.5)" ,"rgba(0,0,255,0.5)"], [0, 0.25, 0.5, 0.75, 1], 0, 0, 0, h);
+            //g.drawRect(0,0,sW,sH);
+            g.drawRoundRect(0,0,w,h,10);
+            mkS = new Shape(g);
+            mkS.x = mk.x;
+            mkS.y = mk.y;
+            mkS.shadow = new Shadow("#000", 0, 0, 10);
+            
             mk.onClick = function(e) {
-                stage.removeChild(nc);
-                stage.removeChild(mk);
+                /*stage.removeChild(nc);
+                stage.removeChild(mk);*/
+                stage.removeAllChildren();
                 init(true);
             };
+            mkS.onClick = mk.onClick;
             
             var nc = mk.clone();
             nc.gotoAndStop(1);
-            nc.x = canvas.width/2;
+            //nc.x = canvas.width/2;
+            nc.x = canvas.width/2+canvas.width/4-w/2;
             nc.y = (canvas.height/2)-(h/2);
             nc.mouseEnabled = true;
             
+            var q = new Graphics();
+            q.beginLinearGradientFill(["rgba(255,0,0,0.5)", "rgba(255,255,0,0.5)" ,"rgba(0,255,0,0.5)", "rgba(0,255,255,0.5)" ,"rgba(0,0,255,0.5)"], [0, 0.25, 0.5, 0.75, 1], 0, 0, 0, h);
+            //g.drawRect(0,0,sW,sH);
+            q.drawRoundRect(0,0,w,h,10);
+            ncS = new Shape(q);
+            ncS.x = nc.x;
+            ncS.y = nc.y;
+            ncS.shadow = new Shadow("#000", 0, 0, 10);
+            
             nc.onClick = function(e) {
-                stage.removeChild(nc);
-                stage.removeChild(mk);
+                /*stage.removeChild(nc);
+                stage.removeChild(mk);*/
+                stage.removeAllChildren();
                 init(false);
             };
+            ncS.onClick = nc.onClick;
             
+            stage.addChild(mkS);
             stage.addChild(mk);
+            stage.addChild(ncS);
             stage.addChild(nc);
             stage.update();
         };
         image.src = imgURL;
     }
     function titleScreen(imgURL) {
+        //Ticker.setPaused(false);
         image = new Image();
         image.onload = function(e) {
             //console.log(image.width,image.height);
@@ -658,6 +731,6 @@ window.onload = function() {
     //alert("Durr!");
     //init();
     //pause();
-    titleScreen("Graphics/mudkipTitleScreen.png");
+    titleScreen(titlePic);
 //});
 };
